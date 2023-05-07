@@ -1,0 +1,109 @@
+{
+  "api": {
+    "titles": [
+      "Бойцовский клуб",
+      "Джон Уик",
+      "Человек-паук",
+      "Халк",
+      "Троя",
+      "Бэтмен"
+    ],
+
+    "descriptions": [
+      "Quis velit velit veniam eiusmod commodo sint adipisicing aute laboris ipsum exercitation exercitation voluptate cillum.",
+      "Ullamco esse qui ea ut esse occaecat ipsum.",
+      "Voluptate pariatur duis nulla culpa veniam occaecat do.",
+      "Mollit occaecat ea fugiat minim minim laboris anim culpa eu adipisicing cillum id.",
+      "Et non do adipisicing dolor fugiat commodo pariatur enim irure qui nisi magna.",
+      "Duis nulla culpa veniam occaecat do dolor fugiat commodo pariatur enim irure."
+    ],
+
+    "genres": [
+      "Боевик",
+      "Драмма",
+      "Комедия",
+      "Триллер",
+      "Семейный"
+    ],
+
+    "previewVideoLinks": [
+      "https://yandex.ru/video/preview/8832716206786992250",
+      "https://yandex.ru/video/preview/12604158008516158936",
+      "https://yandex.ru/video/preview/12742173077215047061",
+      "https://yandex.ru/video/preview/16168331790422534737",
+      "https://yandex.ru/video/preview/4882013585242825907"
+    ],
+
+    "videoLinks": [
+      "https://www.kinopoisk.ru/film/361/",
+      "https://www.kinopoisk.ru/film/762738/",
+      "https://www.kinopoisk.ru/film/738/",
+      "https://www.kinopoisk.ru/film/652738/",
+      "https://www.kinopoisk.ru/film/1116546/"
+    ],
+
+    "starring": [
+      "Киану Ривз",
+      "Эдвард Нортон",
+      "Дин Уинтерс",
+      "Микаэл Нюквист",
+      "Эдрианн Палики"
+    ],
+
+    "directors": [
+      "Джаред Лето",
+      "Холт Маккэллани",
+      "Брэд Питт",
+      "Железный человек",
+      "Веном"
+    ],
+
+    "users": [
+      "Mike",
+      "Bob",
+      "Billy",
+      "Molly",
+      "Brad"
+    ],
+
+    "emails": [
+      "LuckScyjoker@pisem.local",
+      "Bob@pisem.local",
+      "BlackJack@pisem.local",
+      "joker@pisem.local",
+      "CatBall@pisem.local"
+    ],
+
+    "avatars": [
+      "luckScyjoker-avatar.jpg",
+      "bob-avatar.jpg",
+      "joker-avatar.jpg",
+      "cat-avatar.jpg",
+      "dog-avatar.jpg"
+    ],
+
+    "posterImages": [
+      "https://www.kinopoisk.ru/picture/2569123/",
+      "https://www.kinopoisk.ru/picture/2569453/",
+      "https://www.kinopoisk.ru/picture/2569713/",
+      "https://www.kinopoisk.ru/picture/2569600/",
+      "https://www.kinopoisk.ru/picture/2569520/"
+    ],
+
+    "backgroundImages": [
+      "https://www.kinopoisk.ru/picture/2257142/",
+      "https://www.kinopoisk.ru/picture/2257132/",
+      "https://www.kinopoisk.ru/picture/2257789/",
+      "https://www.kinopoisk.ru/picture/2257123/",
+      "https://www.kinopoisk.ru/picture/2257179/"
+    ],
+
+    "backgroundColors": [
+      "#165cbf",
+      "#185cbf",
+      "#175cbf",
+      "#198cbf",
+      "#112cbf"
+    ]
+  }
+}
