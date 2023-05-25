@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { inject, injectable } from 'inversify';
 import { setTimeout } from 'node:timers/promises';
 import mongoose, { Mongoose } from 'mongoose';
@@ -30,7 +31,7 @@ export default class MongoClientService implements DatabaseClientInterface {
     }
 
     this.logger.error(`Unable to establish database connection after ${attempt}`);
-    throw new Error('Failed to connect to the database');
+    throw new Error(chalk.red('Failed to connect to the database'));
   }
 
   private async _connect(uri: string): Promise<void> {

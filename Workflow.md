@@ -84,6 +84,27 @@ npm run mock:server
 `DB_PORT=27017` - номер сетевого порта, через который будет происходить соединение с сервером базы данных
 `DB_NAME=wtw` - имя (название) БД
 
+## Описание параметров CLI
+`--help` - печатает текст с возможными командами приложения.
+Пример:
+  npm run ts ./src/main.cli.ts -- --help
+
+`--version` - выводит номер версии приложения
+Пример:
+  npm run ts ./src/main.cli.ts -- --version
+
+`--import <path>` - импортирует данные из TSV
+Пример:
+  npm run ts ./src/main.cli.ts -- --import ./mocks/mock-data.tsv admin test localhost wtw secret
+
+Примечание: Для работы импорта необходимо запустить БД с помощью Docker.
+
+`--generate <n> <path> <url>` - генерирует произвольное количество тестовых данных
+Пример:
+  npm run ts ./src/main.cli.ts -- --generate 10 ./mocks/test-data.tsv http://localhost:8000/api
+
+Примечание: Для работы с генератором необходимо сначало запустить mock:server.
+
 ## Структура проекта
 
 ### Директория `src`
