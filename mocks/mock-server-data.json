@@ -19,11 +19,11 @@
     ],
 
     "genres": [
-      "Боевик",
-      "Драмма",
-      "Комедия",
-      "Триллер",
-      "Семейный"
+      "thriller",
+      "drama",
+      "comedy",
+      "horror",
+      "family"
     ],
 
     "previewVideoLinks": [
