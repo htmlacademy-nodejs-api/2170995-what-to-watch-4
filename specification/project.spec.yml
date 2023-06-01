@@ -1,0 +1,587 @@
+openapi: 3.1.0
+info:
+  title: API сервер для проекта «What to watch».
+  description: |-
+    * Список ресурсов и маршрутов сервера «What to watch».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.0
+tags:
+  - name: films
+    description: Действия с фильмами.
+  - name: comments
+    description: Действия с комментариями.
+  - name: users
+    description: Действия с пользователем.
+paths:
+  /films:
+    get:
+      tags:
+        - films
+      summary: Получение списка фильмов.
+      description: Возвращает массив фильмов. Каждый фильм описан в виде объекта.
+
+      responses:
+        "200":
+          description: Массив фильмов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  allOf:
+                    - $ref: '#/components/schemas/film'
+                    - type: object
+
+    post:
+      tags:
+        - films
+      summary: Добавление нового фильма.
+      description: Добавлять новые фильмы могут только авторизованные пользователи.
+
+      requestBody:
+        description: Информация для добавления нового фильма.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/film'
+      required: true
+
+      responses:
+        "200":
+          description: Фильм добавлен. Объект фильма.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+        "400":
+          description: Не валидные данные. Фильм не добавлен.
+
+  /films/{filmId}:
+    get:
+      tags:
+        - films
+      summary: Получение информации по фильму.
+      description: Возвращает фильм с идентификатором `filmId`.
+
+      requestBody:
+        description: Уникальный идентификатор фильма.
+        content:
+          application/json:
+            schema:
+              type: string
+              example: fsa654432fdsafas45321
+      required: true
+
+      responses:
+        "200":
+          description: Информации по фильму получена.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+        "404":
+          description: Фильм не найден.
+
+    put:
+      tags:
+        - films
+      summary: Редактирование карточки фильма.
+      description: Клиент может редактировать карточки фильмов, которые создал он.
+        Редактировать карточки фильмов могут только авторизованные клиенты.
+
+      responses:
+        "200":
+          description: Изменения были внесены. Объект фильма.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+        "400":
+          description: Не валидные данные. Изменения не были внесены.
+
+    delete:
+      tags:
+        - films
+      summary: Удаление карточки фильма.
+      description: Клиент может удалять только «свои» фильмы.
+        Удалять фильмы могут только авторизованные клиенты.
+
+      responses:
+        "200":
+          description: Фильм удален.
+        "403":
+          description: Невозможно удалить фильм другого пользователя.
+        "400":
+          description: Фильм не удален.
+
+  /promo:
+    get:
+      tags:
+        - films
+      summary: Получение промо-фильма.
+      description: Возвращает фильм в виде объекта.
+
+      responses:
+        "200":
+          description: Объект фильма.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/film'
+
+  /favorite:
+    get:
+      tags:
+        - films
+      summary:  Получить список фильмов «К просмотру»
+      description: Возвращает массив фильмов, добавленных в список «к просмотру».
+
+      requestBody:
+        description: Авторизационный токен пользователя.
+        content:
+          application/json:
+            schema:
+              properties:
+                X-Token:
+                  type: string
+                  example: TRfdafgsdd4561323gfsdREgds54=
+      required: true
+
+      responses:
+        "200":
+          description: Массив фильмов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  allOf:
+                    - $ref: '#/components/schemas/film'
+                    - type: object
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noAuth'
+
+  /favorite/{filmId}/{status}:
+    post:
+      tags:
+        - films
+      summary: Добавить/удалить фильм из списка «К просмотру».
+      description: Возвращает фильм с идентификатором `filmId` с актуальным состоянием поля `isFavorite`.
+      parameters:
+        - name: filmId
+          in: path
+          description: Уникальный идентификатор фильма.
+          required: true
+          schema:
+            type: string
+            example: fsa654432fdsafas45321
+        - name: status
+          in: path
+          description: Статус фильма. Может быть `1` или `0`,
+            где `1` добавляет фильма в список «к просмотру», а `0` удаляет.
+          required: true
+          schema:
+            type: number
+            example: 1
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя.
+          required: true
+          schema:
+            type: string
+            example: TRfdafgsdd4561323gfsdREgds54=
+
+      responses:
+          "200":
+            description: Объект фильма.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/film'
+          "401":
+            description: Пользователь не авторизован.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/noAuth'
+
+      security:
+        - tokenAuth: []
+
+  /comments/{filmId}:
+    get:
+      tags:
+        - comments
+      summary: Получить список комментариев для определённого фильма.
+      description: Возвращает список комментариев для фильма с идентификатором `filmId`.
+
+      requestBody:
+        description: Уникальный идентификатор фильма
+        content:
+            application/json:
+              schema:
+                type: string
+                example: fsa654432fdsafas45321
+                properties:
+                  X-Token:
+                    type: string
+                    example: TRfdafgsdd4561323gfsdREgds54=
+        required: true
+
+    responses:
+      "200":
+          description: Массив комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/commentId'
+      "400":
+          description: Ошибка тела запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+
+    post:
+      tags:
+        - comments
+      summary: Добавить новый комментарий к определённому фильму.
+      description: Добавляет новый комментарий для фильма с идентификатором `filmId`.
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя.
+          required: true
+          schema:
+            type: string
+            example: TRfdafgsdd4561323gfsdREgds54=
+        - name: filmId
+          in: path
+          description: Уникальный идентификатор фильма.
+          required: true
+          schema:
+            type: string
+            example: fsa654432fdsafas45321
+
+      requestBody:
+        description: Объект с новым комментарием.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+        required: true
+
+      responses:
+        '200':
+          description: Массив комментариев для фильма с идентификатором `filmId`.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/commentId'
+        '400':
+          description: Ошибка тела запроса.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '401':
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noAuth'
+
+      security:
+        - tokenAuth: []
+
+
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя.
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+      required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя.
+      description: Возвращает информацию о статусе авторизации пользователя.
+
+      requestBody:
+        description: Авторизационный токен пользователя.
+        content:
+          application/json:
+            schema:
+              properties:
+                X-Token:
+                  type: string
+                  example: TRfdafgsdd4561323gfsdREgds54=
+      required: true
+
+      responses:
+        "200":
+          description: Статус авторизации пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUserInfo'
+        "403":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noAuth'
+
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя.
+      description: Авторизует пользователя на основе логина и пароля.
+
+      requestBody:
+        description: Авторизационные данные пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authUser'
+      required: true
+
+      responses:
+        "200":
+          description: Авторизация выполнена. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authUserInfo'
+        "403":
+          description: Ошибка тела запроса.
+
+      security:
+        - tokenAuth: []
+
+  /users/logout:
+    delete:
+      tags:
+        - users
+      summary: Завершить сеанс пользователя.
+      description: Завершает сеанс работы — выход из закрытой части приложения.
+
+      requestBody:
+        description: Авторизационный токен пользователя.
+        content:
+            application/json:
+              schema:
+                properties:
+                  X-Token:
+                    type: string
+                    example: TRfdafgsdd4561323gfsdREgds54=
+        required: true
+
+      responses:
+        "204":
+          description: Сеанс завершён.
+
+
+components:
+  schemas:
+
+    film:
+      type: object
+      properties:
+        id:
+          type: string
+          example: fsa654432fdsafas45321
+        title:
+          type: string
+          example: Бойцовский клуб
+        description:
+          type: string
+          example: Молодой состоятельный человек – герой «Бойцовского клуба».
+        datePublication:
+          type: string
+          default: текущая дата
+          example: 2023-05-05T10:40:40.261Z
+        genre:
+          type: string
+          example: thriller
+        released:
+          type: number
+          example: 1999
+        rating:
+          type: number
+          default: 0
+          example: 9.5
+        previewVideoLink:
+          type: string
+          example: https://yandex.ru/video/preview/8832716206786992250
+        videoLink:
+          type: string
+          example: https://www.kinopoisk.ru/film/361/
+        starring:
+          type: array
+          items:
+            type: string
+            example: Эдвард Нортон, Брэд Питт, Хелена Бонем Картер, Мит Лоаф, Зэк Гренье, Холт Маккэллани
+        director:
+          type: string
+          example: Дэвид Финчер
+          minimum: 2
+          maximum: 50
+        runTime:
+          type: number
+          example: 139
+        countComments:
+          type: number
+          example: 156
+        user:
+          type: string
+          example: fsalkj5466fsafsa87fsa
+        posterImage:
+          type: string
+          example: https://www.kinopoisk.ru/picture/1801683
+        backgroundImage:
+          type: string
+          example: https://www.kinopoisk.ru/picture/235583
+        backgroundColor:
+          type: string
+          example: '#345abc'
+
+    commentId:
+      type: object
+      properties:
+        comment:
+          type: string
+          example: Отличнейший фильм! Просто супер!
+        date:
+          type: string
+          example: 2023-05-25T22:14:35.569Z
+        id:
+          type: string
+          example: fdsajklfk45978afdsqer3
+        rating:
+          type: number
+          example: 9.5
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: fdsa54fasdg456af4ae54rt
+            name:
+              type: string
+              example: Василий
+
+    comment:
+      commentPost:
+      type: object
+      properties:
+        comment:
+          type: string
+          example: Отличнейший фильм! Просто супер!
+        rating:
+          type: number
+          example: 9.5
+
+    createUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: Scyjoker@mail.ru
+        name:
+          type: string
+          example: Scyjoker
+        password:
+          type: string
+          example: qwerty
+
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5236ewqjfklas46546sda
+        email:
+          type: string
+          example: Scyjoker@mail.ru
+
+    authUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: Scyjoker@mail.ru
+        password:
+          type: string
+          example: qwerty
+
+    authUserInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5236ewqjfklas46546sda
+        email:
+          type: string
+          example: Scyjoker@mail.ru
+        avatarUrl:
+          type: string
+          example: Scyjoker-avatar.jpg
+        name:
+          type: string
+          example: Scyjoker
+        X-Token:
+          type: string
+          example: TRfdafgsdd4561323gfsdREgds54=
+
+    noAuth:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Вы не вошли в систему или у вас нет разрешения на доступ к этой странице.
+
+    notFound:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Фильм с id 46as4fdd4ads6g8asf не найден.
+
+    securitySchemes:
+      tokenAuth:
+        type: apiKey
+        name: X-Token
+        in: header
