@@ -16,7 +16,7 @@
     "clean": "rimraf dist",
     "ts": "ts-node",
     "mock:server": "json-server ./mocks/mock-server-data.json --port 8000",
-    "start:dev": "npm run ts ./src/main.ts | pino-pretty --colorize --translateTime SYS:standard"
+    "start:dev": "nodemon"
   },
   "devDependencies": {
     "@types/convict": "6.1.1",
@@ -28,6 +28,7 @@
     "eslint-config-htmlacademy": "9.1.1",
     "got": "12.6.0",
     "json-server": "0.17.3",
+    "nodemon": "2.0.22",
     "pino-pretty": "9.1.1",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",
