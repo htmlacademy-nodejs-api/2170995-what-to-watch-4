@@ -5,6 +5,7 @@ import RestApplication from './app/rest.js';
 import { createRestApplicationContainer } from './app/rest.container.js';
 import { createUserContainer } from './modules/user/user.container.js';
 import { createFilmContainer } from './modules/film/film.container.js';
+import { createCommentContainer } from './modules/comment/comment.container.js';
 
 
 async function bootstrap() {
@@ -12,6 +13,7 @@ async function bootstrap() {
     createRestApplicationContainer(),
     createUserContainer(),
     createFilmContainer(),
+    createCommentContainer()
   );
 
   const application = mainContainer.get<RestApplication>(AppComponent.RestApplication);
