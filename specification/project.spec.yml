@@ -212,6 +212,8 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/noAuth'
+          "404":
+            description: Фильм не найден.
 
       security:
         - tokenAuth: []
@@ -357,7 +359,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/authUserInfo'
-        "403":
+        "401":
           description: Пользователь не авторизован.
           content:
             application/json:
@@ -385,7 +387,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/authUserInfo'
-        "403":
+        "401":
           description: Ошибка тела запроса.
 
       security:
