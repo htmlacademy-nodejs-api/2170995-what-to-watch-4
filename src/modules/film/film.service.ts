@@ -6,7 +6,7 @@ import { inject, injectable } from 'inversify';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { FilmEntity } from './film.entity.js';
-import { SortType } from './../../types/sort-type.enum';
+import { SortType } from '../../types/sort-type.enum.js';
 import { DEFAULT_FILM_COUNT } from './film.constant.js';
 import EditFilmDto from './dto/edit-film.dto.js';
 
@@ -24,10 +24,14 @@ export default class FilmService implements FilmServiceInterface {
     return result;
   }
 
+  public async findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel.findOne({ title: filmTitle }).exec();
+  }
+
   public async editById(filmId: string, dto: EditFilmDto): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findByIdAndUpdate(filmId, dto, {new: true})
-      .populate(['userId'])
+      .populate(['user'])
       .exec();
   }
 
@@ -42,7 +46,7 @@ export default class FilmService implements FilmServiceInterface {
 
     return this.filmModel
       .find()
-      .populate(['userId'])
+      .populate(['user'])
       .limit(limit)
       .exec();
   }
@@ -53,7 +57,7 @@ export default class FilmService implements FilmServiceInterface {
       .find({genreFilm: genre}, {}, {limit})
       .sort({datePublication: SortType.Down})
       .limit(limit)
-      .populate(['userId'])
+      .populate(['user'])
       .exec();
   }
 
@@ -78,7 +82,7 @@ export default class FilmService implements FilmServiceInterface {
         {
           $lookup: {
             from: 'users',
-            localField: 'userId',
+            localField: 'user',
             foreignField: '_id',
             as: 'user'
           }
@@ -101,7 +105,7 @@ export default class FilmService implements FilmServiceInterface {
         {
           $lookup: {
             from: 'users',
-            localField: 'userID',
+            localField: 'user',
             foreignField: '_id',
             as: 'user'
           }
@@ -118,14 +122,14 @@ export default class FilmService implements FilmServiceInterface {
   public async findFavorites(): Promise<DocumentType<FilmEntity>[] | null> {
     return this.filmModel
       .find()
-      .populate(['userId'])
+      .populate(['user'])
       .exec();
   }
 
   public async editFavorite(filmId: string): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findById(filmId)
-      .populate(['userId'])
+      .populate(['user'])
       .exec();
   }
 
