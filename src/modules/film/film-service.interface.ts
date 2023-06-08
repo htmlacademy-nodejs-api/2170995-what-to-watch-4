@@ -5,6 +5,7 @@ import EditFilmDto from './dto/edit-film.dto.js';
 
 export interface FilmServiceInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
+  findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null>;
   editById(filmId: string, dto: EditFilmDto): Promise<DocumentType<FilmEntity> | null>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity>| null>;
   find(count?: number): Promise<DocumentType<FilmEntity>[]>;

@@ -1,0 +1,70 @@
+# Фильмы
+## Получить список фильмов
+GET http://localhost:3001/films HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Добавить новый фильм
+POST http://localhost:3001/films HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Бэтмен: Начало",
+  "description": "В детстве юный наследник огромного состояния Брюс Уэйн оказался свидетелем убийства своих родителей, и тогда он решил бороться с преступностью.",
+  "genre": "drama",
+  "released": 2005,
+  "rating": 7.9,
+  "previewVideoLink": "https://yandex.ru/video/preview/12268624301725430597",
+  "videoLink": "https://yandex.ru/video/12268624301725430452",
+  "starrings": [
+        "Кристиан Бэйл",
+        "Кэти Холмс",
+        "Майкл Кейн",
+        "Киллиан Мерфи",
+        "Том Уилкинсон",
+        "Лиам Нисон",
+        "Кэн Ватанабэ",
+        "Гари Олдман",
+        "Морган Фриман",
+        "Рутгер Хауэр"
+    ],
+  "director": "Кристофер Нолан",
+  "runTime": 140,
+  "commentCount": 1250,
+  "user": "646cf8d195439a4f2a00b3ea",
+  "posterImage": "https://www.kinopoisk.ru/film/47237/posters/",
+  "backgroundImage": "https://www.kinopoisk.ru/picture/805318/",
+  "backgroundColor": "#BF45CA",
+  "isFavorite": true
+}
+
+###
+
+# Пользователи
+## Создать нового пользователя
+
+POST http://localhost:3001/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "torans@overlook.net",
+  "avatar": "torrance.png",
+  "name": "Jack",
+  "password": "shining"
+}
+
+###
+
+
+## Авторизовать пользователя
+
+POST http://localhost:3001/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "torans@overlook.net",
+  "password": "123456"
+}
+
+###
