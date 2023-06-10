@@ -12,7 +12,7 @@ export interface CommentEntity extends defaultClasses.Base {}
   }
 })
 export class CommentEntity extends defaultClasses.TimeStamps {
-  @prop({ trim: true, required: true, minlength: 5, maxlength: 1024})
+  @prop({ trim: true, required: true })
   public text!: string;
 
   @prop({ required: true })
