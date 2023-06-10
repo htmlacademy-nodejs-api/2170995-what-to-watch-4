@@ -42,7 +42,7 @@ export default class ImportCommand implements CliCommandInterface {
 
     await this.filmService.create({
       ...film,
-      user: user.id,
+      userId: user.id,
     });
   }
 

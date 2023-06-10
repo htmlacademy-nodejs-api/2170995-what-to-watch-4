@@ -1,4 +1,4 @@
-export const getMongoURI = (
+export const getURI = (
   username: string,
   password: string,
   host: string,
