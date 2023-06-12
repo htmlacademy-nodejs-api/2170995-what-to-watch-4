@@ -42,11 +42,11 @@ export default class UserController extends Controller {
     });
 
     this.addRoute({
-      path: '/:userId/avatar',
+      path: '/:user/avatar',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
-        new ValidateObjectIdMiddleware('userId'),
+        new ValidateObjectIdMiddleware('user'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
 
       ]

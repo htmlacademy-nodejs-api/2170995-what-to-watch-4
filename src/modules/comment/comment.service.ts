@@ -13,13 +13,13 @@ export default class CommentService implements CommentServiceInterface {
 
   public async create(dto: CreateCommentDto): Promise<DocumentType<CommentEntity>> {
     const comment = await this.commentModel.create(dto);
-    return comment.populate('userId');
+    return comment.populate('user');
   }
 
   public async findByFilmId(filmId: string): Promise<DocumentType<CommentEntity>[]> {
     return this.commentModel
       .find({filmId})
-      .populate('userId');
+      .populate('user');
   }
 
   public async deleteByFilmId(filmId: string): Promise<number> {

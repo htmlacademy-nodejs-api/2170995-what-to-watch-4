@@ -19,13 +19,9 @@ export default class FilmService implements FilmServiceInterface {
 
   public async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {
     const result = await this.filmModel.create(dto);
-    this.logger.info(`New user created ${dto.title}`);
+    this.logger.info(`New film created ${dto.title}`);
 
     return result;
-  }
-
-  public async findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel.findOne({ title: filmTitle }).exec();
   }
 
   public async updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null> {

@@ -18,7 +18,7 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public description!: string;
 
-  @prop({required: true, default: new Date()})
+  @prop({default: new Date()})
   public datePublication!: Date;
 
   @prop({

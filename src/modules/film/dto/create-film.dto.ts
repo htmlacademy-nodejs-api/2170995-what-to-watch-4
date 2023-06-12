@@ -1,4 +1,4 @@
-import { Length, MaxLength, IsDateString, IsArray, IsEnum, IsInt, IsString, IsMongoId, IsHexadecimal } from 'class-validator';
+import { Length, MaxLength, IsDateString, IsArray, IsEnum, IsInt, IsString, IsMongoId, IsHexColor, IsOptional } from 'class-validator';
 import { FilmGenre } from '../../../types/film-genre.enum.js';
 
 export default class CreateFilmDto {
@@ -8,7 +8,10 @@ export default class CreateFilmDto {
   @Length(20, 1024, {message: 'Min length is 20, max is 1024'})
   public description!: string;
 
-  @IsDateString({}, {message: 'post date must be valid ISO date'})
+  @IsOptional()
+  @IsDateString({}, {
+    message: 'post date must be valid ISO date'
+  })
   public datePublication!: Date;
 
   @IsEnum(FilmGenre, {
@@ -35,8 +38,8 @@ export default class CreateFilmDto {
   @IsInt({message: 'run time must be an integer'})
   public runTime!: number;
 
-  @IsMongoId({message: 'userId field must be valid an id'})
-  public userId!: string;
+  @IsMongoId({message: 'user field must be valid an id'})
+  public user!: string;
 
   @IsString({message: 'poster image is required'})
   @MaxLength(256, {message: 'Too short for field poster image'})
@@ -46,6 +49,6 @@ export default class CreateFilmDto {
   @MaxLength(256, {message: 'Too short for field background image'})
   public backgroundImage!: string;
 
-  @IsHexadecimal({message: 'the background color should be in hexadecimal format'})
+  @IsHexColor({message: 'the background color should be in hexadecimal format'})
   public backgroundColor!: string;
 }

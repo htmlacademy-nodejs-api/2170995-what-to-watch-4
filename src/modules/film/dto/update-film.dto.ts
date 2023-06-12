@@ -1,4 +1,4 @@
-import { Length, MaxLength, IsDateString, IsArray, IsEnum, IsInt, IsString, IsHexadecimal, IsOptional } from 'class-validator';
+import { Length, MaxLength, IsDateString, IsArray, IsEnum, IsInt, IsString, IsHexColor, IsOptional } from 'class-validator';
 import { FilmGenre } from '../../../types/film-genre.enum.js';
 
 export default class UpdateFilmDto {
@@ -56,6 +56,6 @@ export default class UpdateFilmDto {
   public backgroundImage?: string;
 
   @IsOptional()
-  @IsHexadecimal({message: 'the background color should be in hexadecimal format'})
+  @IsHexColor({message: 'the background color should be in hexadecimal format'})
   public backgroundColor?: string;
 }

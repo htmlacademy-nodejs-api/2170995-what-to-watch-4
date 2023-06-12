@@ -6,7 +6,6 @@ import { DocumentExistsInterface } from '../../core/middlewares/document-exists.
 
 export interface FilmServiceInterface extends DocumentExistsInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
-  findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null>;
   updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity>| null>;
   find(count?: number): Promise<DocumentType<FilmEntity>[]>;
