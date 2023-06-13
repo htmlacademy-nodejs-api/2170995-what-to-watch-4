@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import TSVFileReader from '../file-reader/tsv-file-reader.js';
 import { CliCommandInterface } from './cli-command.interface.js';
-import { createFilm, getErrorMessage, getMongoURI } from '../helpers/index.js';
+import { createFilm, getErrorMessage, getURI } from '../helpers/index.js';
 import { UserServiceInterface } from '../../modules/user/user-service.interface.js';
 import { FilmServiceInterface } from '../../modules/film/film-service.interface.js';
 import { LoggerInterface } from '../logger/logger.interface.js';
@@ -58,7 +58,7 @@ export default class ImportCommand implements CliCommandInterface {
   }
 
   public async execute(filename: string, login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
-    const uri = getMongoURI(login, password, host, DEFAULT_DB_PORT, dbname);
+    const uri = getURI(login, password, host, DEFAULT_DB_PORT, dbname);
     this.salt = salt;
 
     await this.databaseService.connect(uri);

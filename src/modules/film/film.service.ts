@@ -8,7 +8,7 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { FilmEntity } from './film.entity.js';
 import { SortType } from '../../types/sort-type.enum.js';
 import { DEFAULT_FILM_COUNT } from './film.constant.js';
-import EditFilmDto from './dto/edit-film.dto.js';
+import UpdateFilmDto from './dto/update-film.dto.js';
 
 @injectable()
 export default class FilmService implements FilmServiceInterface {
@@ -19,16 +19,12 @@ export default class FilmService implements FilmServiceInterface {
 
   public async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {
     const result = await this.filmModel.create(dto);
-    this.logger.info(`New user created ${dto.title}`);
+    this.logger.info(`New film created ${dto.title}`);
 
     return result;
   }
 
-  public async findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel.findOne({ title: filmTitle }).exec();
-  }
-
-  public async editById(filmId: string, dto: EditFilmDto): Promise<DocumentType<FilmEntity> | null> {
+  public async updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
       .findByIdAndUpdate(filmId, dto, {new: true})
       .populate(['user'])
@@ -122,13 +118,6 @@ export default class FilmService implements FilmServiceInterface {
   public async findFavorites(): Promise<DocumentType<FilmEntity>[] | null> {
     return this.filmModel
       .find()
-      .populate(['user'])
-      .exec();
-  }
-
-  public async editFavorite(filmId: string): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel
-      .findById(filmId)
       .populate(['user'])
       .exec();
   }

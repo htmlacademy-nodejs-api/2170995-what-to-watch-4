@@ -1,11 +1,5 @@
 # Фильмы
-## Получить список фильмов
-GET http://localhost:3001/films HTTP/1.1
-Content-Type: application/json
-
-###
-
-## Добавить новый фильм
+## 1. Добавить новый фильм
 POST http://localhost:3001/films HTTP/1.1
 Content-Type: application/json
 
@@ -14,10 +8,9 @@ Content-Type: application/json
   "description": "В детстве юный наследник огромного состояния Брюс Уэйн оказался свидетелем убийства своих родителей, и тогда он решил бороться с преступностью.",
   "genre": "drama",
   "released": 2005,
-  "rating": 7.9,
   "previewVideoLink": "https://yandex.ru/video/preview/12268624301725430597",
   "videoLink": "https://yandex.ru/video/12268624301725430452",
-  "starrings": [
+  "starring": [
         "Кристиан Бэйл",
         "Кэти Холмс",
         "Майкл Кейн",
@@ -31,8 +24,7 @@ Content-Type: application/json
     ],
   "director": "Кристофер Нолан",
   "runTime": 140,
-  "commentCount": 1250,
-  "user": "646cf8d195439a4f2a00b3ea",
+  "user": "646fcb3ec1b2ff1d003aee3d",
   "posterImage": "https://www.kinopoisk.ru/film/47237/posters/",
   "backgroundImage": "https://www.kinopoisk.ru/picture/805318/",
   "backgroundColor": "#BF45CA",
@@ -41,30 +33,46 @@ Content-Type: application/json
 
 ###
 
-# Пользователи
-## Создать нового пользователя
+## 2. Редактирование фильма
 
-POST http://localhost:3001/users/register HTTP/1.1
+PATCH http://localhost:3001/films/6480e567dbae8b5def49476a HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "torans@overlook.net",
-  "avatar": "torrance.png",
-  "name": "Jack",
-  "password": "shining"
+  "title": "Темный рыцарь",
+  "description": "Проверка",
+  "released": 2008
 }
 
 ###
 
+## 3. Удаление фильма
 
-## Авторизовать пользователя
+DELETE http://localhost:3001/films/6480e067aaf0211ececd441d HTTP/1.1
 
-POST http://localhost:3001/users/login HTTP/1.1
+###
+
+## 4. Получить список фильмов
+GET http://localhost:3001/films HTTP/1.1
 Content-Type: application/json
 
-{
-  "email": "torans@overlook.net",
-  "password": "123456"
-}
+###
+
+## 5. Получение списка фильмов определённого жанра
+GET http://localhost:3001/films/genre/crime?limit=2 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## 6. Получение детальной информации по фильму
+
+GET http://localhost:3001/films/646fcb3ec1b2ff1d003aee44 HTTP/1.1
+Content-Type: application/json
+
+###
+
+## 7. Получить промо-фильм
+GET http://localhost:3001/promo HTTP/1.1
+Content-Type: application/json
 
 ###

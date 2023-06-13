@@ -12,13 +12,13 @@ export interface FilmEntity extends defaultClasses.Base {}
   }
 })
 export class FilmEntity extends defaultClasses.TimeStamps {
-  @prop({trim: true, required: true, minlength: 2, maxlength: 100})
+  @prop({trim: true, required: true})
   public title!: string;
 
-  @prop({required: true, minlength: 20, maxlength: 1024})
+  @prop({required: true})
   public description!: string;
 
-  @prop({required: true, default: new Date()})
+  @prop({default: new Date()})
   public datePublication!: Date;
 
   @prop({
@@ -47,7 +47,7 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   })
   public starring!: string[];
 
-  @prop({required: true, minlength: 2, maxlength: 50})
+  @prop({required: true})
   public director!: string;
 
   @prop({required: true})
