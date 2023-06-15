@@ -1,3 +1,4 @@
+import { UnknownRecord } from './../../types/unknown-record.type';
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import * as core from 'express-serve-static-core';
@@ -17,6 +18,7 @@ import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 
 type ParamsGetFilm = {
   filmId: string;
@@ -40,7 +42,10 @@ export default class FilmController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFilmDto)
+      ]
     });
 
     this.addRoute({
@@ -58,6 +63,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
       ]
@@ -68,6 +74,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new ValidateDtoMiddleware(UpdateFilmDto),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
@@ -89,9 +96,9 @@ export default class FilmController extends Controller {
     });
   }
 
-  public async create({ body }: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
+  public async create({ body, user }: Request<UnknownRecord, UnknownRecord, CreateFilmDto>,
     res: Response): Promise<void> {
-    const result = await this.filmService.create(body);
+    const result = await this.filmService.create({...body, user: user.id});
     const film = await this.filmService.findById(result.id);
     this.created(res, fillDTO(FilmRdo, film));
   }

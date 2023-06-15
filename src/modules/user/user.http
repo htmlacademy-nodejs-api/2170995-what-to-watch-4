@@ -37,3 +37,12 @@ Content-Type: image/jpeg
 
 < C:\Users\Professional\Desktop\dew.jpeg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+##
+###
+
+## Проверить токен пользователя
+GET http://localhost:3001/users/login HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ4YjdlNzlhMTAwOGY1Y2I0ZDU3MGVlIiwiaWF0IjoxNjg2ODYzNDg3LCJleHAiOjE2ODcwMzYyODd9.E3WlEvcsr2ML5HsKpalBqiKeAI9DwWOl1ik145AjY-Q
+
+###

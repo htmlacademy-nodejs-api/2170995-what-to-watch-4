@@ -12,6 +12,8 @@ import { HttpMethod } from '../../types/http-method.enum.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CommentRdo from './rdo/comment.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
+import { UnknownRecord } from './../../types/unknown-record.type';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 
 
 export default class CommentController extends Controller {
@@ -27,12 +29,15 @@ export default class CommentController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateCommentDto)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCommentDto)
+      ],
     });
   }
 
   public async create(
-    {body}: Request<object, object, CreateCommentDto>,
+    {body, user}: Request<UnknownRecord, UnknownRecord, CreateCommentDto>,
     res: Response
   ): Promise<void> {
 
@@ -44,7 +49,7 @@ export default class CommentController extends Controller {
       );
     }
 
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({...body, user: user.id});
     await this.filmService.incCommentCount(body.filmId);
     this.created(res, fillDTO(CommentRdo, comment));
   }
