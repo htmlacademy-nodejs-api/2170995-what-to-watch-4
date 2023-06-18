@@ -1,7 +1,16 @@
 # Фильмы
+@hostname = http://localhost
+@port = 3001
+@host = {{hostname}}:{{port}}
+@parentPath = films
+@contentType = application/json
+@filmId = 64876bbe9f22d9b8bdb88a5e
+@deleteFilmId = 646fcb3ec1b2ff1d003aee44
+@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ4ZTIyMzM1MTlhZTgwZTJhMzMzM2I2IiwiaWF0IjoxNjg3MDM2NDgzLCJleHAiOjE2ODcyMDkyODN9.0eUNOqfd9M9OTQTsEKWRuq3kvsWUtBryNFQvFIqE7jE
 ## 1. Добавить новый фильм
-POST http://localhost:3001/films HTTP/1.1
-Content-Type: application/json
+POST {{host}}/{{parentPath}} HTTP/1.1
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "title": "Бэтмен: Начало",
@@ -35,12 +44,13 @@ Content-Type: application/json
 
 ## 2. Редактирование фильма
 
-PATCH http://localhost:3001/films/6480e567dbae8b5def49476a HTTP/1.1
+PATCH {{host}}/{{parentPath}}/{{filmId}} HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "Темный рыцарь",
-  "description": "Проверка",
+  "description": "Проверка новая проверка и еще одна проверка на проверке с проверкой",
   "released": 2008
 }
 
@@ -48,31 +58,32 @@ Content-Type: application/json
 
 ## 3. Удаление фильма
 
-DELETE http://localhost:3001/films/6480e067aaf0211ececd441d HTTP/1.1
+DELETE {{host}}/{{parentPath}}/{{deleteFilmId}} HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 
 ## 4. Получить список фильмов
-GET http://localhost:3001/films HTTP/1.1
-Content-Type: application/json
+GET {{host}}/{{parentPath}} HTTP/1.1
+Content-Type: {{contentType}}
 
 ###
 
 ## 5. Получение списка фильмов определённого жанра
-GET http://localhost:3001/films/genre/crime?limit=2 HTTP/1.1
-Content-Type: application/json
+GET {{host}}/{{parentPath}}/genre/drama?limit=2 HTTP/1.1
+Content-Type: {{contentType}}
 
 ###
 
 ## 6. Получение детальной информации по фильму
 
-GET http://localhost:3001/films/646fcb3ec1b2ff1d003aee44 HTTP/1.1
-Content-Type: application/json
+GET {{host}}/{{parentPath}}/{{filmId}} HTTP/1.1
+Content-Type: {{contentType}}
 
 ###
 
 ## 7. Получить промо-фильм
-GET http://localhost:3001/promo HTTP/1.1
-Content-Type: application/json
+GET {{host}}/promo HTTP/1.1
+Content-Type: {{contentType}}
 
 ###
