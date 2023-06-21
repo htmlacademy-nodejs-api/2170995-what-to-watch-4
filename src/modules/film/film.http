@@ -6,7 +6,7 @@
 @contentType = application/json
 @filmId = 64876bbe9f22d9b8bdb88a5e
 @deleteFilmId = 646fcb3ec1b2ff1d003aee44
-@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ4ZTIyMzM1MTlhZTgwZTJhMzMzM2I2IiwiaWF0IjoxNjg3MDM2NDgzLCJleHAiOjE2ODcyMDkyODN9.0eUNOqfd9M9OTQTsEKWRuq3kvsWUtBryNFQvFIqE7jE
+@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ5MzZlMTU2MjY4Zjk4ZGNmZTJlZDM1IiwiaWF0IjoxNjg3MzgzNTgxLCJleHAiOjE2ODc1NTYzODF9.2uugdpxJz3qwC2olaGpcAEVzaoWjhi-yhaA6A_6upQo
 ## 1. Добавить новый фильм
 POST {{host}}/{{parentPath}} HTTP/1.1
 Content-Type: {{contentType}}

@@ -16,18 +16,20 @@ import LoginUserDto from './dto/login-user.dto.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
+import { PrivateRouteMiddleware } from './../../core/middlewares/private-route.middleware.js';
 import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { JWT_ALGORITHM } from './user.constant.js';
 import LoggerUserRdo from './rdo/logged-user.rdo.js';
+import UploadUserAvatarRdo from './rdo/upload-user-avatar.rdo.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.ConfigInterface) private readonly configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) protected readonly configService: ConfigInterface<RestSchema>
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for UserController...');
 
     this.addRoute({
@@ -49,6 +51,7 @@ export default class UserController extends Controller {
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('user'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
       ]
@@ -106,28 +109,30 @@ export default class UserController extends Controller {
       }
     );
 
-    this.ok(res, fillDTO(LoggerUserRdo, {
-      email: user.email,
+    this.ok(res, {
+      ...fillDTO(LoggerUserRdo, user),
       token
-    }));
-  }
-
-  public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
     });
   }
 
-  public async checkAuthenticate({user: {email}}: Request, res: Response) {
-    const foundedUser = await this.userService.findByEmail(email);
+  public async uploadAvatar(req: Request, res: Response) {
+    const {user} = req.params;
+    const uploadFile = {avatar: req.file?.filename};
+    await this.userService.updateById(user, uploadFile);
+    this.created(res, fillDTO(UploadUserAvatarRdo, uploadFile));
+  }
 
-    if(!foundedUser) {
+  public async checkAuthenticate(req: Request, res: Response) {
+    if (!req.user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
-        'UserController'
+        UserController.name
       );
     }
+
+    const {user:{email}} = req;
+    const foundedUser = await this.userService.findByEmail(email);
 
     this.ok(res, fillDTO(LoggerUserRdo, foundedUser));
   }

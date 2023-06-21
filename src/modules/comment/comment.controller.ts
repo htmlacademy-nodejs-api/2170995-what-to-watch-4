@@ -14,6 +14,8 @@ import CommentRdo from './rdo/comment.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from './../../types/unknown-record.type';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
+import { ConfigInterface } from '../../core/config/config.interface.js';
 
 
 export default class CommentController extends Controller {
@@ -21,8 +23,9 @@ export default class CommentController extends Controller {
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
     @inject(AppComponent.FilmServiceInterface) private readonly filmService: FilmServiceInterface,
+    @inject(AppComponent.ConfigInterface) configInterface: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configInterface);
 
     this.logger.info('Register routes for CommentController...');
     this.addRoute({

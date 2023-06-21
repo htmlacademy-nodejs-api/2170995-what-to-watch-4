@@ -1,4 +1,4 @@
-import { Length, MaxLength, IsDateString, IsArray, IsEnum, IsInt, IsString, IsHexColor, IsOptional } from 'class-validator';
+import { Length, IsDateString, IsArray, IsEnum, IsInt, IsString, IsHexColor, IsOptional } from 'class-validator';
 import { FilmGenre } from '../../../types/film-genre.enum.js';
 
 export default class CreateFilmDto {
@@ -39,14 +39,6 @@ export default class CreateFilmDto {
   public runTime!: number;
 
   public user!: string;
-
-  @IsString({message: 'poster image is required'})
-  @MaxLength(256, {message: 'Too short for field poster image'})
-  public posterImage!: string;
-
-  @IsString({message: 'background image is required'})
-  @MaxLength(256, {message: 'Too short for field background image'})
-  public backgroundImage!: string;
 
   @IsHexColor({message: 'the background color should be in hexadecimal format'})
   public backgroundColor!: string;

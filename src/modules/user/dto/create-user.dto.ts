@@ -8,9 +8,6 @@ export default class CreateUserDto {
   @Length(1, 15, {message: 'Min length is 1, max is 15'})
   public name!: string;
 
-  @IsString({message: 'avatar is required'})
-  public avatar!: string;
-
   @IsString({message: 'password is required'})
   @Length(6, 12, {message: 'Min length for password is 6, max is 12'})
   public password!: string;

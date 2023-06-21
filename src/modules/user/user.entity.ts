@@ -12,7 +12,7 @@ export interface UserEntity extends defaultClasses.Base {}
   }
 })
 export class UserEntity extends defaultClasses.TimeStamps implements UserInfo {
-  @prop({ required: true, minlength: 1, maxlength: 15, default: '' })
+  @prop({ required: true, default: '' })
   public name: string;
 
   @prop({ required: true, unique: true })
@@ -21,7 +21,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements UserInfo {
   @prop({ required: false, default: '' })
   public avatar: string;
 
-  @prop({ required: true, minlength: 6, default: '' })
+  @prop({ required: true, default: '' })
   private password?: string;
 
   constructor(userData: UserInfo) {
