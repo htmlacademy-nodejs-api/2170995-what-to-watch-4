@@ -16,9 +16,15 @@ import { FilmGenre } from '../../types/film-genre.enum.js';
 import { CommentServiceInterface } from '../comment/comment-service.interface.js';
 import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
+import { UploadFileMiddleware } from './../../core/middlewares/upload-file.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
+import { ConfigInterface } from '../../core/config/config.interface.js';
+import { NUMBER_PROMO_FILM } from './film.constant.js';
+import UploadPosterImageRdo from './rdo/upload-poster-image.rdo.js';
+import UploadBackgroundImageRdo from './rdo/upload-background-image.rdo.js';
 
 type ParamsGetFilm = {
   filmId: string;
@@ -31,8 +37,9 @@ export default class FilmController extends Controller {
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.FilmServiceInterface) private readonly filmService: FilmServiceInterface,
     @inject(AppComponent.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for FilmController...');
 
@@ -94,6 +101,55 @@ export default class FilmController extends Controller {
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
       ]
     });
+
+    this.addRoute({
+      path: '/:filmId/posterImage',
+      method: HttpMethod.Post,
+      handler: this.uploadPosterImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'posterImage'),
+      ]
+    });
+
+    this.addRoute({
+      path: '/:filmId/backgroundImage',
+      method: HttpMethod.Post,
+      handler: this.uploadBackgroundImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('filmId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'posterImage'),
+      ]
+    });
+
+    this.addRoute({
+      path: '/favorite/:filmId/:status([0-1]{1})',
+      method: HttpMethod.Post,
+      handler: this.updateFavoriteFilms,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+
+    this.addRoute({
+      path: '/favorite',
+      method: HttpMethod.Get,
+      handler: this.findFavorites,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+      ]
+    });
+  }
+
+  public async index(_req: Request<unknown, unknown, unknown, RequestQuery>, res: Response): Promise<void> {
+    const films = await this.filmService.find(_req.query.limit);
+    const filmsToResponse = fillDTO(FilmRdo, films);
+    this.ok(res, filmsToResponse);
   }
 
   public async create({ body, user }: Request<UnknownRecord, UnknownRecord, CreateFilmDto>,
@@ -103,13 +159,12 @@ export default class FilmController extends Controller {
     this.created(res, fillDTO(FilmRdo, film));
   }
 
-  public async update(
-    {body, params}: Request<core.ParamsDictionary | ParamsGetFilm, Record<string, unknown>,
-    UpdateFilmDto>, res: Response
-  ): Promise<void> {
-    const updateFilm = await this.filmService.updateById(params.filmId, body);
+  public async show({params}: Request<core.ParamsDictionary | ParamsGetFilm>,
+    res: Response): Promise<void> {
+    const {filmId} = params;
+    const film = await this.filmService.findById(filmId);
 
-    this.ok(res, fillDTO(FilmRdo, updateFilm));
+    this.ok(res, fillDTO(FilmRdo, film));
   }
 
   public async delete(
@@ -123,34 +178,30 @@ export default class FilmController extends Controller {
     this.noContent(res, film);
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const films = await this.filmService.find();
+  public async update(
+    {body, params}: Request<core.ParamsDictionary | ParamsGetFilm, Record<string, unknown>,
+    UpdateFilmDto>, res: Response
+  ): Promise<void> {
+    const updateFilm = await this.filmService.updateById(params.filmId, body);
+
+    this.ok(res, fillDTO(FilmRdo, updateFilm));
+  }
+
+  public async promo(_req: Request<unknown, unknown, unknown, RequestQuery>, res: Response): Promise<void> {
+    const films = await this.filmService.find(NUMBER_PROMO_FILM);
     const filmsToResponse = fillDTO(FilmRdo, films);
+
     this.ok(res, filmsToResponse);
   }
 
   public async getFilmsFromGenre(
     {params, query}: Request<core.ParamsDictionary | ParamsGetFilm, unknown, unknown, RequestQuery>,
     res: Response
-  ):Promise<void> {
+  ): Promise<void> {
     const {genre} = params;
     const films = await this.filmService.findByGenre(genre, query.limit);
 
     this.ok(res, fillDTO(FilmRdo, films));
-  }
-
-  public async show({params}: Request<core.ParamsDictionary | ParamsGetFilm>,
-    res: Response): Promise<void> {
-    const {filmId} = params;
-    const film = await this.filmService.findById(filmId);
-
-    this.ok(res, fillDTO(FilmRdo, film));
-  }
-
-  public async promo(_req: Request, res: Response): Promise<void> {
-    const promoFilm = await this.filmService.findPromo();
-
-    this.ok(res, fillDTO(FilmRdo, promoFilm));
   }
 
   public async getComments(
@@ -159,5 +210,44 @@ export default class FilmController extends Controller {
   ): Promise<void> {
     const comments = await this.commentService.findByFilmId(params.filmId);
     this.ok(res, fillDTO(CommentRdo, comments));
+  }
+
+  public async uploadPosterImage(req: Request<core.ParamsDictionary | ParamsGetFilm, object, object>,
+    res: Response
+  ): Promise<void> {
+    const {filmId} = req.params;
+    const updateDto = { posterImage: req.file?.filename };
+    await this.filmService.updateById(filmId, updateDto);
+    this.created(res, fillDTO(UploadPosterImageRdo, updateDto));
+  }
+
+  public async uploadBackgroundImage(req: Request<core.ParamsDictionary | ParamsGetFilm, object, object>,
+    res: Response
+  ): Promise<void> {
+    const {filmId} = req.params;
+    const updateDto = { backgroundImage: req.file?.filename };
+    await this.filmService.updateById(filmId, updateDto);
+    this.created(res, fillDTO(UploadBackgroundImageRdo, updateDto));
+  }
+
+  public async updateFavoriteFilms(_req: Request, _res: Response): Promise<void> {
+    const {filmId, status} = _req.params;
+    const user = _req.user.id;
+    const film = await this.filmService.updateFavoriteFilms(user, filmId, status);
+    const filmsToResponse = fillDTO(FilmRdo, film);
+
+    if (Number(status) === 0) {
+      this.noContent(_res, filmsToResponse);
+    } else {
+      this.ok(_res, filmsToResponse);
+    }
+  }
+
+  public async findFavorites(_req: Request, _res: Response): Promise<void> {
+    const user = _req.user.id;
+    const films = await this.filmService.findFavorites(user);
+    const filmsToResponse = fillDTO(FilmRdo, films);
+
+    this.ok(_res, filmsToResponse);
   }
 }

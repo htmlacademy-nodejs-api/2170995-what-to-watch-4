@@ -92,7 +92,11 @@ npm run mock:server
 
 `UPLOAD_DIRECTORY` - каталог для загрузки файлов,
 
-`JWT_SECRET` - Секрет для знака JWT,
+`STATIC_DIRECTORY_PATH` - путь к каталогу со статическими ресурсами,
+
+`JWT_SECRET` - секрет для знака JWT,
+
+`HOST` - хост, на котором запущено приложение
 
 ## Описание параметров CLI
 

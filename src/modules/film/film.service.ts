@@ -47,10 +47,11 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async findByGenre(genre: string, count?: number): Promise<DocumentType<FilmEntity>[]> {
+  public async findByGenre(genre: string, count?: number): Promise<DocumentType<FilmEntity>[] | null> {
     const limit = count ?? DEFAULT_FILM_COUNT;
+
     return this.filmModel
-      .find({genreFilm: genre}, {}, {limit})
+      .find({genre: { $all : [genre] }}, {}, {limit})
       .sort({datePublication: SortType.Down})
       .limit(limit)
       .populate(['user'])
@@ -92,32 +93,9 @@ export default class FilmService implements FilmServiceInterface {
       ]);
   }
 
-  public async findPromo(): Promise<DocumentType<FilmEntity>[] | null> {
+  public async findFavorites(user: string): Promise<DocumentType<FilmEntity>[] | null> {
     return this.filmModel
-      .aggregate([
-        {
-          $sample: {size: 1},
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'user',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $unwind: '$user'
-        },
-        {
-          $unset: 'user._id'
-        },
-      ]);
-  }
-
-  public async findFavorites(): Promise<DocumentType<FilmEntity>[] | null> {
-    return this.filmModel
-      .find()
+      .find({ favorite: user})
       .populate(['user'])
       .exec();
   }
@@ -127,6 +105,21 @@ export default class FilmService implements FilmServiceInterface {
       .findByIdAndUpdate(filmId, {'$inc': {
         commentCount: 1,
       }}).exec();
+  }
+
+  public async updateFavoriteFilms(user:string, filmId:string, status:string
+  ): Promise<DocumentType<FilmEntity> | null> {
+    if(Number(status) !== 0){
+      return this.filmModel
+        .findByIdAndUpdate(filmId, {'$addToSet': {
+          favorite: user,
+        }})
+        .populate(['user'])
+        .exec();
+    }
+    return this.filmModel
+      .findByIdAndUpdate(filmId, {'$pull': {favorite: user}})
+      .exec();
   }
 
   public async exists(filmId: string): Promise<boolean> {
