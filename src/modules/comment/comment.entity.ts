@@ -20,7 +20,6 @@ export class CommentEntity extends defaultClasses.TimeStamps {
 
   @prop({
     ref: FilmEntity,
-    required: true
   })
   public filmId!: Ref<FilmEntity>;
 

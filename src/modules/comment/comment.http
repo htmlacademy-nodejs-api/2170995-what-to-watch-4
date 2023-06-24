@@ -5,19 +5,17 @@
 @parentPath = comments
 @childrenPath = films
 @contentType = application/json
-@filmId = 64876bbe9f22d9b8bdb88a5e
-@deleteFilmId = 648e2121519ae80e2a3333aa
-@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ4ZTIyMzM1MTlhZTgwZTJhMzMzM2I2IiwiaWF0IjoxNjg3MDM2NDgzLCJleHAiOjE2ODcyMDkyODN9.0eUNOqfd9M9OTQTsEKWRuq3kvsWUtBryNFQvFIqE7jE
+@filmId = 64976b4221a3c97c7495d8aa
+@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ5NjIzNDE5ZjNhNmQxY2M4MzU2MDI4IiwiaWF0IjoxNjg3NTYxMDM3LCJleHAiOjE2ODc3MzM4Mzd9.k0TQNPtTHKHxAXIfwT_vRGv3WXNpNa_gvrB9DjiJQtQ
 
 ## Создать комментарий
-POST {{host}}/{{parentPath}} HTTP/1.1
+POST {{host}}/{{parentPath}}/{{filmId}} HTTP/1.1
 Content-Type: {{contentType}}
 Authorization: Bearer {{token}}
 
 {
   "text": "Тот момент, когда десяток отрицательный комментариев ближе, чем три сотни положительных.",
-  "rating": 7,
-  "filmId": "64876bbe9f22d9b8bdb88a5e"
+  "rating": 1
 }
 
 ###
@@ -26,8 +24,3 @@ Authorization: Bearer {{token}}
 GET {{host}}/{{childrenPath}}/{{filmId}}/{{parentPath}} HTTP/1.1
 
 ###
-
-## Удаление фильма
-
-DELETE {{host}}/{{childrenPath}}/{{deleteFilmId}} HTTP/1.1
-Authorization: Bearer {{token}}

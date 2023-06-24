@@ -11,4 +11,6 @@ export default class CreateUserDto {
   @IsString({message: 'password is required'})
   @Length(6, 12, {message: 'Min length for password is 6, max is 12'})
   public password!: string;
+
+  public favoriteFilms!: string[];
 }

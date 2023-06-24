@@ -31,7 +31,7 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public released!: number;
 
-  @prop({required: true, default: 0})
+  @prop({default: 0})
   public rating!: number;
 
   @prop({required: true, trim: true})
@@ -70,6 +70,9 @@ export class FilmEntity extends defaultClasses.TimeStamps {
 
   @prop({required: true, trim: true})
   public backgroundColor!: string;
+
+  @prop({default: false})
+  public isFavorite!: boolean;
 }
 
 export const FilmModel = getModelForClass(FilmEntity);

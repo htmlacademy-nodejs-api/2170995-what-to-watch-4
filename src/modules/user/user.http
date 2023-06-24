@@ -5,7 +5,7 @@
 @parentPath = users
 @contentType = application/json
 @userId = 646fcb3ec1b2ff1d003aee3d
-@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ4ZTIyMzM1MTlhZTgwZTJhMzMzM2I2IiwiaWF0IjoxNjg3MDM2NDgzLCJleHAiOjE2ODcyMDkyODN9.0eUNOqfd9M9OTQTsEKWRuq3kvsWUtBryNFQvFIqE7jE
+@token = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkJsYWNrSmFja0BwaXNlbS5sb2NhbCIsImlkIjoiNjQ5NzZmMTJhYWFhYTY2M2Q4YzVkY2RiIiwiaWF0IjoxNjg3NjQ2MDY2LCJleHAiOjE2ODc4MTg4NjZ9.TT9IBZqtM7RBeYnJQPoJ5OJS_gxo1sgRmRIaa65-jSA
 
 ## Создать нового пользователя
 

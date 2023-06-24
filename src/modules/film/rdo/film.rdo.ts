@@ -22,7 +22,7 @@ export default class FilmRdo {
   public released!: number;
 
   @Expose()
-  public raiting!: number;
+  public rating!: number;
 
   @Expose()
   public previewVideoLink!: string;
@@ -54,4 +54,7 @@ export default class FilmRdo {
 
   @Expose()
   public backgroundColor!: string;
+
+  @Expose()
+  public isFavorite!: boolean;
 }
