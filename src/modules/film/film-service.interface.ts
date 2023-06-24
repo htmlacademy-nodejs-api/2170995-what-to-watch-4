@@ -6,12 +6,14 @@ import { DocumentExistsInterface } from '../../core/middlewares/document-exists.
 
 export interface FilmServiceInterface extends DocumentExistsInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
+  findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null>;
+  deleteByFilmId(filmId: string): Promise<number | null>;
   updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity>| null>;
   find(count?: number): Promise<DocumentType<FilmEntity>[]>;
   findByGenre(genre: string, count?: number): Promise<DocumentType<FilmEntity>[] | null>;
-  findById(filmId: string): Promise<DocumentType<FilmEntity>[] | null>;
-  findFavorites(user: string): Promise<DocumentType<FilmEntity>[] | null>;
-  updateFavoriteFilms(user: string, filmId:string, status:string): Promise<DocumentType<FilmEntity> | null>;
+  findById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
+  findFavoriteFilms(user: string): Promise<DocumentType<FilmEntity>[] | null>;
   incCommentCount(filmId: string): Promise<DocumentType<FilmEntity> | null>;
+  calculateRating(filmId: string): Promise<DocumentType<FilmEntity> | null>;
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { inject } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
+import * as core from 'express-serve-static-core';
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
@@ -12,10 +13,13 @@ import { HttpMethod } from '../../types/http-method.enum.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CommentRdo from './rdo/comment.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import { UnknownRecord } from './../../types/unknown-record.type';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
+
+type ParamsFilmDetails = {
+  filmId: string;
+}
 
 
 export default class CommentController extends Controller {
@@ -29,7 +33,7 @@ export default class CommentController extends Controller {
 
     this.logger.info('Register routes for CommentController...');
     this.addRoute({
-      path: '/',
+      path: '/:filmId',
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
@@ -40,20 +44,24 @@ export default class CommentController extends Controller {
   }
 
   public async create(
-    {body, user}: Request<UnknownRecord, UnknownRecord, CreateCommentDto>,
+    {params, body, user}: Request<core.ParamsDictionary | ParamsFilmDetails, Record<string, unknown>,
+    CreateCommentDto>,
     res: Response
   ): Promise<void> {
 
-    if (!await this.filmService.exists(body.filmId)) {
+    const {filmId} = params;
+
+    if (!await this.filmService.exists(filmId)) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Film with id ${body.filmId} not found.`,
+        `Film with id ${filmId} not found.`,
         'CommentController'
       );
     }
 
-    const comment = await this.commentService.create({...body, user: user.id});
-    await this.filmService.incCommentCount(body.filmId);
+    const comment = await this.commentService.create(filmId, {...body, user: user.id});
+    await this.filmService.incCommentCount(filmId);
+    await this.filmService.calculateRating(filmId);
     this.created(res, fillDTO(CommentRdo, comment));
   }
 }

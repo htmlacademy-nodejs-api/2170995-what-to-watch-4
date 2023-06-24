@@ -23,6 +23,10 @@ export default class CreateFilmDto {
   @IsInt({message: 'released must be an integer'})
   public released!: number;
 
+  @IsOptional()
+  @IsInt({message: 'released must be an integer'})
+  public rating!: number;
+
   @IsString({message: 'preview video link is required'})
   public previewVideoLink!: string;
 

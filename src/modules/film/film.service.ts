@@ -6,15 +6,19 @@ import { inject, injectable } from 'inversify';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { FilmEntity } from './film.entity.js';
+import { UserEntity } from './../user/user.entity';
 import { SortType } from '../../types/sort-type.enum.js';
-import { DEFAULT_FILM_COUNT } from './film.constant.js';
+import { DEFAULT_FILM_COUNT, RATING_NUMBER } from './film.constant.js';
 import UpdateFilmDto from './dto/update-film.dto.js';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 @injectable()
 export default class FilmService implements FilmServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.FilmModel) private readonly filmModel: types.ModelType<FilmEntity>,
+    @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>
   ) {}
 
   public async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {
@@ -41,10 +45,17 @@ export default class FilmService implements FilmServiceInterface {
     const limit = count ?? DEFAULT_FILM_COUNT;
 
     return this.filmModel
-      .find()
+      .find({}, {}, {limit})
       .populate(['user'])
-      .limit(limit)
       .exec();
+  }
+
+  public async deleteByFilmId(filmId: string): Promise<number> {
+    const result = await this.filmModel
+      .deleteMany({filmId})
+      .exec();
+
+    return result.deletedCount;
   }
 
   public async findByGenre(genre: string, count?: number): Promise<DocumentType<FilmEntity>[] | null> {
@@ -58,68 +69,69 @@ export default class FilmService implements FilmServiceInterface {
       .exec();
   }
 
-  public async findById(filmId: string): Promise<DocumentType<FilmEntity>[] | null> {
+  public async findByFilmTitle(filmTitle: string): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel
+      .findOne({title: filmTitle})
+      .populate(['user'])
+      .exec();
+  }
+
+  public async findById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel
+      .findById(filmId)
+      .populate(['user'])
+      .exec();
+  }
+
+  public async findFavoriteFilms(user: string): Promise<DocumentType<FilmEntity>[] | null> {
+    const userId = await this.userModel.findById(user);
+
+    if(!userId) {
+      return null;
+    }
+
+    const favoriteFilms = userId.favoriteFilms;
+
+    return this.filmModel
+      .find({ _id: favoriteFilms})
+      .populate(['user'])
+      .exec();
+  }
+
+  public async incCommentCount(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel
+      .findByIdAndUpdate(filmId, {'$inc': {
+        countComments: 1,
+      }}).exec();
+  }
+
+  public async calculateRating(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+    const result = await this.filmModel
       .aggregate([
-        {
-          $match: {'_id': new mongoose.Types.ObjectId(filmId)},
-        },
+        { $match: { _id: new ObjectId(filmId) } },
         {
           $lookup: {
             from: 'comments',
             localField: '_id',
             foreignField: 'filmId',
-            as: 'commentData'
-          }
+            as: 'comments'
+          },
         },
         {
-          $set:
-          {rating: {$avg: '$commentData.rating'}, comments: { $size: '$commentData'}}
+          $group: {
+            _id: '$_id',
+            avgRating: { $max: {$avg: '$comments.rating'} }
+          },
         },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'user',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $unwind: '$user'
-        },
-        {
-          $unset: 'user._id'
-        },
-      ]);
-  }
-
-  public async findFavorites(user: string): Promise<DocumentType<FilmEntity>[] | null> {
-    return this.filmModel
-      .find({ favorite: user})
-      .populate(['user'])
+      ])
       .exec();
-  }
 
-  public async incCommentCount(filmId: string): Promise<DocumentType<FilmEntity > | null> {
-    return this.filmModel
-      .findByIdAndUpdate(filmId, {'$inc': {
-        commentCount: 1,
-      }}).exec();
-  }
-
-  public async updateFavoriteFilms(user:string, filmId:string, status:string
-  ): Promise<DocumentType<FilmEntity> | null> {
-    if(Number(status) !== 0){
-      return this.filmModel
-        .findByIdAndUpdate(filmId, {'$addToSet': {
-          favorite: user,
-        }})
-        .populate(['user'])
-        .exec();
+    if (result.length === 0) {
+      return null;
     }
-    return this.filmModel
-      .findByIdAndUpdate(filmId, {'$pull': {favorite: user}})
-      .exec();
+
+    const rating = Number(result[0].avgRating).toFixed(RATING_NUMBER);
+    return await this.filmModel.findByIdAndUpdate(filmId, {rating: rating}, {new: true}).exec();
   }
 
   public async exists(filmId: string): Promise<boolean> {
