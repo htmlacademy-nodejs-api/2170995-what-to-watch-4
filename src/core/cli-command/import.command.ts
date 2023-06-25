@@ -29,7 +29,7 @@ export default class ImportCommand implements CliCommandInterface {
     this.onLine = this.onLine.bind(this);
     this.onComplete = this.onComplete.bind(this);
     this.logger = new ConsoleLoggerService();
-    this.filmService = new FilmService(this.logger, FilmModel);
+    this.filmService = new FilmService(this.logger, FilmModel, UserModel);
     this.userService = new UserService(this.logger, UserModel);
     this.databaseService = new MongoClientService(this.logger);
   }
